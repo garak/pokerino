@@ -2,6 +2,8 @@
 
 namespace Pokerino;
 
+use Garak\Card\Card;
+
 final class Hand
 {
     /** @var array<Card> */
@@ -39,8 +41,8 @@ final class Hand
         $value = 0;
 
         foreach ($this->cards as $card) {
-            $values[] = $card->getValue()->getIntValue();
-            $suits[] = $card->getSuit()->getIntValue();
+            $values[] = $card->getRank()->getInt();
+            $suits[] = $card->getSuit()->getInt();
         }
 
         $bit = 0;
