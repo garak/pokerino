@@ -19,27 +19,23 @@ final class Hand
         $this->cards = $cards;
     }
 
-    /**
-     * See https://www.codeproject.com/Articles/569271/A-Poker-hand-analyzer-in-JavaScript-using-bit-math
-     */
     public function getPoint(): string
     {
         $points = [
-            '4 of a Kind',
-            'Straight Flush',
-            'Straight',
-            'Flush',
-            'High Card',
-            '1 Pair',
-            '2 Pair',
-            'Royal Flush',
-            '3 of a Kind',
-            'Full House',
+            0 => '4 of a Kind',
+            1 => 'Straight Flush',
+            2 => 'Straight',
+            3 => 'Flush',
+            4 => 'High Card',
+            5 => '1 Pair',
+            6 => '2 Pair',
+            7 => 'Royal Flush',
+            8 => '3 of a Kind',
+            9 => 'Full House',
         ];
 
         $values = [];
         $suits = [];
-
         $value = 0;
 
         foreach ($this->cards as $card) {
@@ -48,18 +44,18 @@ final class Hand
         }
 
         $bit = 0;
-        $noc = \count($this->cards);
-        for ($i = 0; $i < $noc; ++$i) {
+        $numberOfCards = \count($this->cards);
+        for ($i = 0; $i < $numberOfCards; ++$i) {
             $bit |= 1 << $values[$i];
         }
 
-        for ($i = 0; $i < $noc; ++$i) {
+        for ($i = 0; $i < $numberOfCards; ++$i) {
             $offset = 2 ** ($values[$i] * 4);
             $value += $offset * (($value / $offset & 15) + 1);
         }
         $value = $value % 15 - (($bit / ($bit & -$bit) === 31) || ($bit === 0x403c) ? 3 : 1);
         $suitsBit = 0;
-        for ($i = 0; $i < $noc; ++$i) {
+        for ($i = 0; $i < $numberOfCards; ++$i) {
             $suitsBit |= $suits[$i];
         }
 
