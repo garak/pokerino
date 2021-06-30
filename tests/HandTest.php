@@ -16,7 +16,6 @@ final class HandTest extends TestCase
     public function testPoint(array $cards, string $point): void
     {
         $hand = new Hand($cards);
-        #print_r(array_map('strval', $cards));
         self::assertEquals($point, $hand->getPoint());
     }
 
@@ -33,9 +32,8 @@ final class HandTest extends TestCase
                     Card::fromRankSuit('Jh'),
                     Card::fromRankSuit('8s'),
                     Card::fromRankSuit('3s'),
-                    // TODO it doesn't work with more than 5 cards... :-|
-                    //Card::fromRankSuit('2s'),
-                    //Card::fromRankSuit('Kd'),
+                    Card::fromRankSuit('2s'),
+                    Card::fromRankSuit('Kd'),
                 ],
                 'point' => 'High Card',
             ],
