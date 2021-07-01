@@ -1,8 +1,8 @@
 {
     "name": "garak/pokerino",
-    "type": "project",
-    "description": "Poker game",
-    "license": "LGPL-3+",
+    "type": "library",
+    "description": "A PHP library to manage Poker card games",
+    "license": "LGPL-3.0-or-later",
     "authors": [
         {
             "name": "Massimiliano Arione",
@@ -15,6 +15,11 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "1.0-dev"
+        }
     },
     "autoload": {
         "psr-4": {
