@@ -1,10 +1,10 @@
 <?php
 
-namespace Pokerino\Tests;
+namespace Garak\Pokerino\Tests;
 
 use Garak\Card\Card;
+use Garak\Pokerino\Hand;
 use PHPUnit\Framework\TestCase;
-use Pokerino\Hand;
 
 final class HandTest extends TestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Pokerino;
+namespace Garak\Pokerino;
 
 use Garak\Card\Card;
 
