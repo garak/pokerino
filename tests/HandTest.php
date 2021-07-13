@@ -8,6 +8,12 @@ use PHPUnit\Framework\TestCase;
 
 final class HandTest extends TestCase
 {
+    public function testGetCards(): void
+    {
+        $hand = new Hand([Card::fromRankSuit('6c'), Card::fromRankSuit('6h')]);
+        self::assertCount(2, $hand->getCards());
+    }
+
     /**
      * @dataProvider getPoints
      *

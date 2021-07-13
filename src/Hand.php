@@ -3,22 +3,18 @@
 namespace Garak\Pokerino;
 
 use Garak\Card\Card;
+use Garak\Card\Hand as BaseHand;
 
-final class Hand
+final class Hand extends BaseHand
 {
-    /** @var array<Card> */
-    private array $cards;
-
     private ?Card $high = null;
 
     private ?Card $kicker = null;
 
-    /**
-     * @param array<Card> $cards
-     */
-    public function __construct(array $cards)
+    public function __construct(array $cards, bool $start = true, ?callable $checking = null, ?callable $sorting = null)
     {
         $this->cards = $cards;
+        $this->sorting = $sorting;
     }
 
     public function getPoint(): string
@@ -29,14 +25,6 @@ final class Hand
         $this->kicker = $rank->getKicker();
 
         return $point;
-    }
-
-    /**
-     * @return array<Card>
-     */
-    public function getCards(): array
-    {
-        return $this->cards;
     }
 
     public function getHigh(): ?Card

@@ -70,14 +70,6 @@ final class PokerRank
         return $points[4];
     }
 
-    /**
-     * @return array<Card>
-     */
-    public function getCards(): array
-    {
-        return $this->cards;
-    }
-
     public function getHigh(): ?Card
     {
         return $this->high;
