@@ -41,7 +41,11 @@ final class PokerRank
         }
 
         if ($this->isStraight()) {
-            return $this->isFlush(false) ? $points[7] : $points[2];
+            if ($this->isFlush(false)) {
+                return 'A' === $this->cards[0]->getRank()->getValue() ? $points[7] : $points[1];
+            }
+
+            return $points[2];
         }
 
         if ($this->isFullHouse()) {
@@ -309,8 +313,8 @@ final class PokerRank
     {
         $values = $this->getCardsValues();
         $counts = \array_count_values($values);
-        $three = \array_search(3, $counts, true);
-        $two = \array_search(2, $counts, true);
+        $three = \in_array(3, $counts, true);
+        $two = \in_array(2, $counts, true);
         if (false === $three || false === $two) {
             return false;
         }

@@ -20,10 +20,11 @@ final class GameTest extends TestCase
         $game->deal();
         self::assertTrue($game->hasPlayer($player1));
         self::assertTrue($player1->isPlaying($game));
-        self::assertCount(2, $game->getHands()[0]->getCards());
-        self::assertCount(2, $game->getHands()[1]->getCards());
-        self::assertCount(2, $game->getHands()[2]->getCards());
-        self::assertCount(5, $game->getHands()[3]->getCards());
+        [$hand1, $hand2, $hand3, $hand4] = $game->getHands();
+        self::assertCount(2, $hand1->getCards());
+        self::assertCount(2, $hand2->getCards());
+        self::assertCount(2, $hand3->getCards());
+        self::assertCount(5, $hand4->getCards());
     }
 
     public function testCannotJoinTwice(): void

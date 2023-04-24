@@ -30,7 +30,7 @@ final class HandTest extends TestCase
     /**
      * @return array<string, array<string, array<Card>|string>>
      */
-    public function getPoints(): array
+    public static function getPoints(): array
     {
         return [
             'none' => [
@@ -59,6 +59,19 @@ final class HandTest extends TestCase
                 'high' => '6s',
                 'kicker' => '8s',
            ],
+            'straight flush' => [
+                'cards' => [
+                    Card::fromRankSuit('9c'),
+                    Card::fromRankSuit('Tc'),
+                    Card::fromRankSuit('Jc'),
+                    Card::fromRankSuit('Qc'),
+                    Card::fromRankSuit('Kc'),
+                    Card::fromRankSuit('3s'),
+                ],
+                'point' => 'Straight Flush',
+                'high' => 'Kc',
+                'kicker' => '3s',
+            ],
             'royal flush' => [
                 'cards' => [
                     Card::fromRankSuit('Ac'),

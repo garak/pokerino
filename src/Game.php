@@ -28,6 +28,7 @@ abstract class Game
             throw new \InvalidArgumentException('Player already joined.');
         }
         $this->players->add($player);
+        $this->currentPlayer = $player;
     }
 
     public function hasPlayer(Player $player): bool
@@ -47,14 +48,18 @@ abstract class Game
         for ($i = 0; $i < $this->players->count(); ++$i) {
             $handCards = [];
             for ($j = 0; $j < $startingHandCount; ++$j) {
-                $handCards[] = \array_shift($cards);
+                if (null !== $card = \array_shift($cards)) {
+                    $handCards[] = $card;
+                }
             }
             $this->hands->add(new Hand($handCards));
         }
         if ($commonCount > 0) {
             $handCards = [];
             for ($i = 0; $i < $commonCount; ++$i) {
-                $handCards[] = \array_shift($cards);
+                if (null !== $card = \array_shift($cards)) {
+                    $handCards[] = $card;continue;
+                }
             }
             $this->hands->add(new Hand($handCards));
         }

@@ -1,0 +1,69 @@
+name: build
+
+on:
+    pull_request: ~
+    push: ~
+
+jobs:
+    phpstan:
+        runs-on: ubuntu-20.04
+        name: PHPStan
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+            - name: PHPStan
+              uses: docker://oskarstark/phpstan-ga
+              env:
+                  REQUIRE_DEV: true
+              with:
+                  args: analyse
+    cs-fixer:
+        runs-on: ubuntu-20.04
+        name: PHP-CS-Fixer
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+            - name: Fix CS
+              uses: docker://oskarstark/php-cs-fixer-ga
+    tests:
+        runs-on: ubuntu-22.04
+        strategy:
+            max-parallel: 1
+            matrix:
+                php:
+                    - '8.0'
+                    - '8.1'
+                    - '8.2'
+                include:
+                    - description: 'lowest'
+                      php: '8.0'
+                      composer_option: '--prefer-lowest'
+                    - description: '8.1'
+                      php: '8.1'
+                    - description: 'latest'
+                      php: '8.2'
+        name: PHP ${{ matrix.php }} tests
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+            - name: Cache
+              uses: actions/cache@v3
+              with: 
+                  path: ~/.composer/cache/files
+                  key: ${{ matrix.php }}-${{ matrix.composer_option }} 
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php }}
+            - run: composer update --no-interaction --no-progress --ansi ${{ matrix.composer_option }}
+            - run: vendor/bin/phpunit
+            - name: Test & publish code coverage
+              if: ${{ matrix.php == '8.2' }}
+              uses: paambaati/codeclimate-action@v3.2.0
+              env:
+                  CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+              with:
+                  coverageCommand: vendor/bin/phpunit --coverage-clover coverage.xml
+                  coverageLocations: ${{github.workspace}}/coverage.xml:clover
+
+

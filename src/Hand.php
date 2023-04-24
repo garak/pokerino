@@ -14,7 +14,12 @@ final class Hand extends BaseHand
     public function __construct(array $cards, bool $start = true, ?callable $checking = null, ?callable $sorting = null)
     {
         $this->cards = $cards;
-        $this->sorting = $sorting;
+        if (null !== $sorting) {
+            $this->sorting = $sorting;
+        }
+        if ($start && null !== $checking) {
+            $checking();
+        }
     }
 
     public function getPoint(): string
