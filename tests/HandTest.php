@@ -8,6 +8,14 @@ use PHPUnit\Framework\TestCase;
 
 final class HandTest extends TestCase
 {
+    public function testSortAndCheck(): void
+    {
+        $sorting = static fn (Card $card): int => 1;
+        $checking = static fn (array $cards): bool => true;
+        $hand = new Hand([Card::fromRankSuit('6c')], true, $checking, $sorting);
+        self::assertCount(1, $hand->getCards());
+    }
+
     public function testGetCards(): void
     {
         $hand = new Hand([Card::fromRankSuit('6c'), Card::fromRankSuit('6h')]);

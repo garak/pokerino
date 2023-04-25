@@ -58,7 +58,7 @@ abstract class Game
             $handCards = [];
             for ($i = 0; $i < $commonCount; ++$i) {
                 if (null !== $card = \array_shift($cards)) {
-                    $handCards[] = $card;continue;
+                    $handCards[] = $card;
                 }
             }
             $this->hands->add(new Hand($handCards));

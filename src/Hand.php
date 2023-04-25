@@ -18,7 +18,7 @@ final class Hand extends BaseHand
             $this->sorting = $sorting;
         }
         if ($start && null !== $checking) {
-            $checking();
+            $checking($cards);
         }
     }
 
