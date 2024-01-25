@@ -1,5 +1,7 @@
 # Pokerino: a PHP poker library
 
+[![License](http://poser.pugx.org/garak/pokerino/license)](https://packagist.org/packages/garak/pokerino) 
+[![PHP Version Require](http://poser.pugx.org/garak/pokerino/require/php)](https://packagist.org/packages/garak/pokerino)
 [![Maintainability](https://api.codeclimate.com/v1/badges/42795bd10fe0986138b5/maintainability)](https://codeclimate.com/github/garak/pokerino/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/42795bd10fe0986138b5/test_coverage)](https://codeclimate.com/github/garak/pokerino/test_coverage)
 
