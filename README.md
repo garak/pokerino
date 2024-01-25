@@ -7,7 +7,10 @@
 
 This library offers some objects useful to create a Poker card game:
 
+* Game _(to be extended)_
+* Player _(to be extended)_
 * Hand
+* PokerRank
 
 ## Installation
 
@@ -15,7 +18,24 @@ Run `composer require garak/pokerino`.
 
 ## Usage
 
-This part of documentation is still to be written...
+Here is an example of a game:
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+use App\Game;   // this is your Game class, extending \Garak\Pokerino\Game
+use App\Player;   // this is your Player class, extending \Garak\Pokerino\Player
+
+$game = new Game();
+$game->addPlayer(new Player('Marty McFly'));
+$game->addPlayer(new Player('Biff Tannen'));
+$game->addPlayer(new Player('Emmett Brown'));
+$game->addPlayer(new Player('Jennifer Parker'));
+$game->deal();  // deal 2 cards to each player
+$game->hands(); // return an array of \Garak\Pokerino\Hand
+```
 
 ## Credits
 

@@ -6,9 +6,6 @@ use Garak\Card\Card;
 
 final class PokerRank
 {
-    /** @var array<Card> */
-    private array $cards;
-
     private ?Card $high = null;
 
     private ?Card $kicker = null;
@@ -32,9 +29,8 @@ final class PokerRank
     /**
      * @param array<Card> $cards
      */
-    public function __construct(array $cards)
+    public function __construct(private array $cards)
     {
-        $this->cards = $cards;
     }
 
     public function getPoint(): string
