@@ -7,7 +7,7 @@
 
 ## Introduction
 
-This library offers some objects useful to create a Poker card game:
+This library offers some objects useful for creating a Poker card game:
 
 * Game _(to be extended)_
 * Player _(to be extended)_
@@ -41,4 +41,4 @@ $game->hands(); // return an array of \Garak\Pokerino\Hand
 
 ## Credits
 
-The original idea has been developed together with [davidino](https://github.com/davidino).
+The original idea was developed with [davidino](https://github.com/davidino).
