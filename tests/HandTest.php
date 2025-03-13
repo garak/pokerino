@@ -66,7 +66,7 @@ final class HandTest extends TestCase
                 'point' => '4 of a Kind',
                 'high' => '6s',
                 'kicker' => '8s',
-           ],
+            ],
             'straight flush' => [
                 'cards' => [
                     Card::fromRankSuit('9c'),
