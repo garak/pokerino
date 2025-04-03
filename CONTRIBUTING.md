@@ -20,8 +20,8 @@ Thank you!
 
 ## Setup your local environment
 
-You need [docker with docker-compose][3]. Optional use of [make][4] is suggested,
-but not mandatory (you can take a look to the Makefile and run direct your commands).
+You need [docker with compose][3]. Optional use of [make][4] is suggested,
+but not mandatory (you can look at the Makefile and run your commands directly).
 
 First, execute `make build`. After that, you can execute `make start` and then `make install`.
 
