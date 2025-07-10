@@ -4,6 +4,7 @@ namespace Garak\Pokerino\Tests;
 
 use Garak\Card\Card;
 use Garak\Pokerino\Hand;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class HandTest extends TestCase
@@ -23,10 +24,9 @@ final class HandTest extends TestCase
     }
 
     /**
-     * @dataProvider getPoints
-     *
      * @param array<Card> $cards
      */
+    #[DataProvider('getPoints')]
     public function testPoint(array $cards, string $point, string $high, string $kicker): void
     {
         $hand = new Hand($cards);

@@ -11,7 +11,7 @@ final class TwoPairRank extends AbstractRank
         $high = null;
         $kicker = null;
         $counts = \array_count_values(self::getCardsValues($cards));
-        $suitNames = \array_keys($counts, 2);
+        $suitNames = \array_keys($counts, 2, true);
         if (2 !== \count($suitNames)) {
             return new RankResult(false);
         }

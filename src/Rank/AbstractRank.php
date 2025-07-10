@@ -13,9 +13,9 @@ abstract class AbstractRank
     abstract public static function isPoint(array $cards): RankResult;
 
     /**
-     * @param array<int, Card> $cards
+     * @param array<int|string, Card> $cards
      *
-     * @return array<int, int>
+     * @return array<int|string, int>
      */
     protected static function getCardsValues(array $cards): array
     {
@@ -61,7 +61,7 @@ abstract class AbstractRank
      *     'maxSequence': mixed,
      *     'values': mixed,
      *     'cardsInStraight': mixed,
-     *     'cards': array<int, Card>
+     *     'cards': array<int|string, Card>
      * }
      */
     protected static function straight(array $cards): array

@@ -28,7 +28,6 @@ final class StraightRank extends AbstractRank
         $maxSequence = 0;
         $prev = null;
         $max = null;
-        $value = null;
         $cardsInStraight = [];
 
         foreach ($values as $key => $value) {
@@ -68,7 +67,7 @@ final class StraightRank extends AbstractRank
             return new RankResult(true, $high, $kicker);
         }
         // straight with ace in first position
-        if (14 === $value && 2 === $first && 3 === \max($sequence, $maxSequence) && \in_array(5, $values, true) && \in_array(4, $values, true) && \in_array(3, $values, true)) {
+        if (isset($value) && 14 === $value && 2 === $first && 3 === \max($sequence, $maxSequence) && \in_array(5, $values, true) && \in_array(4, $values, true) && \in_array(3, $values, true)) {
             foreach ($cards as $card) {
                 if (5 === $card->getRank()->getInt()) { // A, 2, 3, 4, 5
                     $high = $card;

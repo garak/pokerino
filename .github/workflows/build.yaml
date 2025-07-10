@@ -11,8 +11,10 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v4
+            - run: |
+                  sed -e :a -e '$d;N;2,3ba' -e 'P;D' phpstan.neon > phpstan2.neon && mv phpstan2.neon phpstan.neon
             - name: PHPStan
-              uses: docker://oskarstark/phpstan-ga:1.8.0
+              uses: docker://oskarstark/phpstan-ga
               env:
                   REQUIRE_DEV: true
               with:
@@ -43,6 +45,8 @@ jobs:
                       composer_option: '--prefer-lowest'
                     - description: '8.2'
                       php: '8.2'
+                    - description: '8.3'
+                      php: '8.3'
                     - description: 'latest'
                       php: '8.4'
         name: PHP ${{ matrix.php }} tests

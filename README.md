@@ -7,10 +7,10 @@
 
 ## Introduction
 
-This library offers some objects useful for creating a Poker card game:
+This library offers some PHP classes useful for creating a Poker card game:
 
-* Game _(to be extended)_
-* Player _(to be extended)_
+* Game _(needs to be extended)_
+* Player _(needs to be extended)_
 * Hand
 * PokerRank
 
