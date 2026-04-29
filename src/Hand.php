@@ -10,6 +10,10 @@ final class Hand extends BaseHand
     private ?Card $high = null;
 
     private ?Card $kicker = null;
+    /** @var int[] */
+    private array $tieBreak = [];
+
+    private int $handStrength = 10; // defaults to High Card strength
 
     public function __construct(array $cards, bool $start = true, ?callable $checking = null, ?callable $sorting = null)
     {
@@ -28,6 +32,8 @@ final class Hand extends BaseHand
         $point = $rank->getPoint();
         $this->high = $rank->getHigh();
         $this->kicker = $rank->getKicker();
+        $this->handStrength = $rank->getHandStrength();
+        $this->tieBreak = $rank->getTieBreak();
 
         return $point;
     }
@@ -40,5 +46,28 @@ final class Hand extends BaseHand
     public function getKicker(): ?Card
     {
         return $this->kicker;
+    }
+
+    /** @return int[] */
+    public function getTieBreak(): array
+    {
+        return $this->tieBreak;
+    }
+
+    /**
+     * Returns a numeric hand strength: 1 = Royal Flush … 10 = High Card.
+     * Call getPoint() first, or it will be lazily evaluated when needed.
+     */
+    public function getHandStrength(): int
+    {
+        // Lazily evaluate the hand if it has not been evaluated yet. We detect
+        // this by checking whether `high` and `kicker` are still null. In that
+        // case, calling getPoint() will populate high, kicker and
+        // handStrength.
+        if (null === $this->high && null === $this->kicker) {
+            $this->getPoint();
+        }
+
+        return $this->handStrength;
     }
 }

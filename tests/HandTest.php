@@ -139,7 +139,8 @@ final class HandTest extends TestCase
                     Card::fromRankSuit('Kc'),
                 ],
                 'point' => 'Full House',
-                'high' => '7h',
+                // $high = highest card of the three-of-a-kind (6s), which determines Full House value
+                'high' => '6s',
                 'kicker' => 'Kc',
             ],
             'straight' => [

@@ -42,9 +42,12 @@ abstract class Game
         return $this->hands;
     }
 
-    public function deal(int $startingHandCount = 2, int $commonCount = 5): void
+    /**
+     * @param array<int, Card>|null $deck Pre-arranged deck (useful for testing). If null, a shuffled deck is used.
+     */
+    public function deal(int $startingHandCount = 2, int $commonCount = 5, ?array $deck = null): void
     {
-        $cards = Card::getDeck(true);
+        $cards = $deck ?? Card::getDeck(true);
         for ($i = 0; $i < $this->players->count(); ++$i) {
             $handCards = [];
             for ($j = 0; $j < $startingHandCount; ++$j) {
@@ -63,5 +66,84 @@ abstract class Game
             }
             $this->hands->add(new Hand($handCards));
         }
+    }
+
+    /**
+     * Determines the winner by combining each player's hole cards with the community cards.
+     * Returns null if no hands have been dealt yet or there are no community cards.
+     */
+    public function winner(): ?Player
+    {
+        $handsCount = $this->hands->count();
+        $playersCount = $this->players->count();
+        if ($handsCount < 2 || 0 === $playersCount) {
+            return null;
+        }
+
+        // Ensure a community hand exists. In the expected setup each player
+        // has a hand and there's one additional community hand (playersCount + 1).
+        // If no community cards are present (e.g. commonCount = 0) or hands were
+        // populated differently, do not attempt to compute a winner here.
+        if ($handsCount !== $playersCount + 1) {
+            return null;
+        }
+
+        // Community cards are in the last hand (after all player hands)
+        $communityHand = $this->hands->get($handsCount - 1);
+        if (null === $communityHand) {
+            return null;
+        }
+        $communityCards = $communityHand->getCards();
+        if ([] === $communityCards) {
+            return null;
+        }
+
+        $bestPlayer = null;
+        $bestStrength = \PHP_INT_MAX; // lower is stronger
+        $bestTie = [];
+
+        for ($i = 0; $i < $playersCount; ++$i) {
+            $playerHand = $this->hands->get($i);
+            if (null === $playerHand) {
+                continue;
+            }
+            // Combine hole cards with community cards to form a 7-card hand
+            $combinedCards = \array_merge($playerHand->getCards(), $communityCards);
+            $combined = new Hand($combinedCards);
+            $combined->getPoint();
+
+            $strength = $combined->getHandStrength();
+            $tie = $combined->getTieBreak();
+
+            // Compare: lower strength wins; on tie use lexicographic tie-break vector
+            if ($strength < $bestStrength) {
+                $bestStrength = $strength;
+                $bestTie = $tie;
+                $bestPlayer = $this->players->get($i);
+            } elseif ($strength === $bestStrength) {
+                // lexicographic compare
+                // $bestTie is always initialized as an array
+                $max = \max(\count($tie), \count($bestTie));
+                $cmp = 0;
+                for ($k = 0; $k < $max; ++$k) {
+                    $v1 = $tie[$k] ?? 0;
+                    $v2 = $bestTie[$k] ?? 0;
+                    if ($v1 > $v2) {
+                        $cmp = 1;
+                        break;
+                    }
+                    if ($v1 < $v2) {
+                        $cmp = -1;
+                        break;
+                    }
+                }
+                if (1 === $cmp) {
+                    $bestTie = $tie;
+                    $bestPlayer = $this->players->get($i);
+                }
+            }
+        }
+
+        return $bestPlayer;
     }
 }
