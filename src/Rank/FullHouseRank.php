@@ -17,9 +17,10 @@ final class FullHouseRank extends AbstractRank
             return new RankResult(false);
         }
         CardSorter::sort($cards);
+        // In a Full House the THREE-OF-A-KIND determines the hand value, not the pair
         foreach ($cards as $card) {
             $rank = $card->getRank()->getInt();
-            if (3 === $counts[$rank] || 2 === $counts[$rank]) {
+            if (3 === $counts[$rank]) {
                 $high = $card;
                 break;
             }
