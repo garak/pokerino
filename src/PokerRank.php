@@ -14,6 +14,9 @@ final class PokerRank
     private array $tieBreak = [];
     private ?string $currentPoint = null;
 
+    /** @var array<string, int> */
+    private array $pointStrength = [];
+
     /**
      * Standard poker hand ranking (index = strength, lower = stronger).
      *
@@ -37,6 +40,9 @@ final class PokerRank
      */
     public function __construct(private array $cards)
     {
+        foreach ($this->points as $strength => $pointName) {
+            $this->pointStrength[$pointName] = $strength + 1;
+        }
     }
 
     public function getPoint(): string
@@ -120,6 +126,11 @@ final class PokerRank
         }
 
         // helper to get highest straight from a set of ranks (ints)
+        /**
+         * @param int[] $ranks
+         *
+         * @return ?int
+         */
         $getStraightHigh = static function (array $ranks): ?int {
             $ranks = \array_values(\array_unique($ranks));
             \sort($ranks);
@@ -127,9 +138,8 @@ final class PokerRank
             $best = null;
             $seq = 1;
             $prev = null;
-            for ($i = 0, $n = \count($ranks); $i < $n; ++$i) {
-                $v = $ranks[$i];
-                if ($i > 0 && $v === $prev + 1) {
+            foreach ($ranks as $v) {
+                if (null !== $prev && $v === $prev + 1) {
                     ++$seq;
                 } else {
                     $seq = 1;
@@ -144,7 +154,7 @@ final class PokerRank
                 $best = \max($best ?? 0, 5);
             }
 
-            return $best;
+            return null === $best ? null : (int) $best;
         };
 
         switch ($point) {
@@ -154,7 +164,7 @@ final class PokerRank
             case 'Straight Flush':
                 // for each suit, find straight high; choose best
                 $bestHigh = 0;
-                foreach ($suits as $s => $cards) {
+                foreach ($suits as $cards) {
                     if (\count($cards) < 5) {
                         continue;
                     }
@@ -171,21 +181,9 @@ final class PokerRank
                 return [];
 
             case '4 of a Kind':
-                $quad = null;
-                foreach ($counts as $rank => $c) {
-                    if (4 === $c) {
-                        $quad = $rank;
-                        break;
-                    }
-                }
+                $quad = \array_find_key($counts, static fn (int $c): bool => 4 === $c);
                 // kicker is highest other
-                $kicker = 0;
-                foreach ($unique as $r) {
-                    if ($r !== $quad) {
-                        $kicker = $r;
-                        break;
-                    }
-                }
+                $kicker = \array_find($unique, static fn (int $r): bool => $r !== $quad) ?? 0;
                 if (null !== $quad) {
                     return [$quad, $kicker];
                 }
@@ -193,25 +191,8 @@ final class PokerRank
                 return [];
 
             case 'Full House':
-                $trip = 0;
-                $pair = 0;
-                // find highest trip
-                foreach ($unique as $r) {
-                    if (($counts[$r] ?? 0) >= 3) {
-                        $trip = $r;
-                        break;
-                    }
-                }
-                // find highest pair not the trip
-                foreach ($unique as $r) {
-                    if ($r === $trip) {
-                        continue;
-                    }
-                    if (($counts[$r] ?? 0) >= 2) {
-                        $pair = $r;
-                        break;
-                    }
-                }
+                $trip = \array_find($unique, static fn (int $r): bool => ($counts[$r] ?? 0) >= 3) ?? 0;
+                $pair = \array_find($unique, static fn (int $r): bool => $r !== $trip && ($counts[$r] ?? 0) >= 2) ?? 0;
                 if ($trip > 0) {
                     return [$trip, $pair];
                 }
@@ -221,7 +202,7 @@ final class PokerRank
             case 'Flush':
                 // for each suit with >=5, get top5 ranks and pick lexicographically best
                 $best = [];
-                foreach ($suits as $s => $cards) {
+                foreach ($suits as $cards) {
                     if (\count($cards) < 5) {
                         continue;
                     }
@@ -254,13 +235,7 @@ final class PokerRank
                 return [];
 
             case '3 of a Kind':
-                $trip = 0;
-                foreach ($unique as $r) {
-                    if (($counts[$r] ?? 0) === 3) {
-                        $trip = $r;
-                        break;
-                    }
-                }
+                $trip = \array_find($unique, static fn (int $r): bool => ($counts[$r] ?? 0) === 3) ?? 0;
                 $kickers = [];
                 foreach ($unique as $r) {
                     if ($r === $trip) {
@@ -287,25 +262,13 @@ final class PokerRank
                 if (\count($pairs) < 2) {
                     return [];
                 }
-                $kicker = 0;
-                foreach ($unique as $r) {
-                    if (!\in_array($r, $pairs, true)) {
-                        $kicker = $r;
-                        break;
-                    }
-                }
+                $kicker = \array_find($unique, static fn (int $r): bool => !\in_array($r, $pairs, true)) ?? 0;
 
                 return [$pairs[0], $pairs[1], $kicker];
 
             case '1 Pair':
                 // ensure single pair
-                $pairRank = 0;
-                foreach ($unique as $r) {
-                    if (($counts[$r] ?? 0) >= 2) {
-                        $pairRank = $r;
-                        break;
-                    }
-                }
+                $pairRank = \array_find($unique, static fn (int $r): bool => ($counts[$r] ?? 0) >= 2) ?? 0;
                 $kickers = [];
                 foreach ($unique as $r) {
                     if ($r === $pairRank) {
@@ -324,9 +287,7 @@ final class PokerRank
 
             case 'High Card':
             default:
-                $top = \array_slice($unique, 0, 5);
-
-                return $top;
+                return \array_slice($unique, 0, 5);
         }
     }
 
@@ -340,6 +301,15 @@ final class PokerRank
             $this->getPoint();
         }
 
-        return (int) \array_search($this->currentPoint, $this->points, true) + 1;
+        $point = $this->currentPoint;
+        if (null === $point) {
+            throw new \UnexpectedValueException('Hand point evaluation failed.');
+        }
+
+        if (!isset($this->pointStrength[$point])) {
+            throw new \UnexpectedValueException('Unknown hand point value.');
+        }
+
+        return $this->pointStrength[$point];
     }
 }

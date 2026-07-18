@@ -9,6 +9,51 @@ use PHPUnit\Framework\TestCase;
 
 final class PokerRankTest extends TestCase
 {
+    public function testHandStrengthThrowsWhenCurrentPointIsUnknown(): void
+    {
+        $rank = new PokerRank([
+            Card::fromRankSuit('Ac'),
+            Card::fromRankSuit('Kc'),
+            Card::fromRankSuit('Qc'),
+            Card::fromRankSuit('Jc'),
+            Card::fromRankSuit('Tc'),
+            Card::fromRankSuit('2d'),
+            Card::fromRankSuit('3h'),
+        ]);
+
+        $currentPoint = new \ReflectionProperty($rank, 'currentPoint');
+        $currentPoint->setValue($rank, 'Not A Real Point');
+
+        $this->expectException(\UnexpectedValueException::class);
+        $this->expectExceptionMessage('Unknown hand point value.');
+
+        $rank->getHandStrength();
+    }
+
+    public function testHandStrengthThrowsWhenStrengthMapDoesNotContainCurrentPoint(): void
+    {
+        $rank = new PokerRank([
+            Card::fromRankSuit('Ac'),
+            Card::fromRankSuit('Kc'),
+            Card::fromRankSuit('Qc'),
+            Card::fromRankSuit('Jc'),
+            Card::fromRankSuit('Tc'),
+            Card::fromRankSuit('2d'),
+            Card::fromRankSuit('3h'),
+        ]);
+
+        $currentPoint = new \ReflectionProperty($rank, 'currentPoint');
+        $currentPoint->setValue($rank, 'Royal Flush');
+
+        $pointStrength = new \ReflectionProperty($rank, 'pointStrength');
+        $pointStrength->setValue($rank, []);
+
+        $this->expectException(\UnexpectedValueException::class);
+        $this->expectExceptionMessage('Unknown hand point value.');
+
+        $rank->getHandStrength();
+    }
+
     /**
      * @param string[] $ranks
      */

@@ -12,12 +12,12 @@ build:	## build image
 	docker compose build
 
 clear:	## clear docker image
-	docker rmi -f garak/card
+	docker compose down --rmi local
 
 coverage:	## run test coverage via phpunit
 	docker compose exec php php -d pcov.enabled=1 vendor/bin/phpunit --coverage-html build
 
-cs:	## coding standard check via php-cs-fixer
+cs:	## coding standard check and fix via php-cs-fixer
 	docker compose exec php php vendor/bin/php-cs-fixer fix -v
 
 install:	## install vendors
