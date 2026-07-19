@@ -8,8 +8,6 @@ final class FlushRank extends AbstractRank
 {
     public static function isPoint(array $cards): RankResult
     {
-        $high = null;
-        $kicker = null;
         // Build counts using int keys to avoid string/int mismatch from array_count_values
         $counts = [];
         foreach ($cards as $card) {

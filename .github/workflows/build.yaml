@@ -8,11 +8,11 @@ on:
 
 jobs:
     phpstan:
-        runs-on: ubuntu-24.04
+        runs-on: ubuntu-26.04
         name: PHPStan
         steps:
             - name: Checkout
-              uses: actions/checkout@v6
+              uses: actions/checkout@v7
             - run: |
                   sed -e :a -e '$d;N;2,3ba' -e 'P;D' -i phpstan.neon
             - name: PHPStan
@@ -22,17 +22,17 @@ jobs:
               with:
                   args: analyse
     cs-fixer:
-        runs-on: ubuntu-24.04
+        runs-on: ubuntu-26.04
         name: PHP-CS-Fixer
         steps:
             - name: Checkout
-              uses: actions/checkout@v6
+              uses: actions/checkout@v7
             - name: Fix CS
               uses: docker://oskarstark/php-cs-fixer-ga
               with:
                 args: --diff --dry-run
     tests:
-        runs-on: ubuntu-24.04
+        runs-on: ubuntu-26.04
         strategy:
             max-parallel: 1
             matrix:
@@ -54,13 +54,13 @@ jobs:
         name: PHP ${{ matrix.php }} tests
         steps:
             - name: Checkout
-              uses: actions/checkout@v6
+              uses: actions/checkout@v7
             - name: Setup PHP
               uses: shivammathur/setup-php@v2
               with:
                   php-version: ${{ matrix.php }}
             - name: Install dependencies
-              uses: ramsey/composer-install@v3
+              uses: ramsey/composer-install@v4
               with:
                   dependency-versions: ${{ matrix.dependencies }}
             - name: Run tests

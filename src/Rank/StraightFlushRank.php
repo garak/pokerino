@@ -62,7 +62,7 @@ final class StraightFlushRank extends AbstractRank
             } else {
                 // Check Ace-low straight (wheel) among suited cards: A-2-3-4-5
                 $first = \current($values);
-                if (\in_array(14, $values, true) && 2 === $first && 3 === \max($sequence, $maxSequence) && \in_array(5, $values, true) && \in_array(4, $values, true) && \in_array(3, $values, true)) {
+                if (2 === $first && \in_array(14, $values, true) && 3 === \max($sequence, $maxSequence) && \in_array(5, $values, true) && \in_array(4, $values, true) && \in_array(3, $values, true)) {
                     // high is the 5 in the wheel
                     foreach ($flushCards as $card) {
                         if (5 === $card->getRank()->getInt()) {
