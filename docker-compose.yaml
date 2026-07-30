@@ -3,6 +3,6 @@ services:
         build:
             context: docker
         volumes:
-            - ./:/srv/card
-        working_dir: /srv/card
+            - ./:/srv/pokerino
+        working_dir: /srv/pokerino
         tty: true
