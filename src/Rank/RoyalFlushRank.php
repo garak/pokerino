@@ -4,15 +4,16 @@ namespace Garak\Pokerino\Rank;
 
 use Garak\Card\Card;
 use Garak\Pokerino\CardSorter;
+use Garak\Pokerino\RankValue;
 
 final class RoyalFlushRank extends AbstractRank
 {
     public static function isPoint(array $cards): RankResult
     {
-        // Build counts using int keys to avoid string/int mismatch from array_count_values
+        // Count cards by suit
         $counts = [];
         foreach ($cards as $card) {
-            $s = $card->getSuit()->getInt();
+            $s = $card->getSuit()->value;
             $counts[$s] = ($counts[$s] ?? 0) + 1;
         }
 
@@ -30,7 +31,7 @@ final class RoyalFlushRank extends AbstractRank
             // Collect cards of this suit
             $flushCards = \array_values(\array_filter(
                 $cards,
-                static fn (Card $card): bool => $card->getSuit()->getInt() === $suit
+                static fn (Card $card): bool => $card->getSuit()->value === $suit
             ));
             if ([] === $flushCards) {
                 continue;
@@ -53,7 +54,7 @@ final class RoyalFlushRank extends AbstractRank
             $maxKey = \array_search($max, $values, true);
             $high = null;
             foreach ($flushCards as $card) {
-                if ($card->getRank()->getInt() === $values[$maxKey]) {
+                if (RankValue::of($card) === $values[$maxKey]) {
                     $high = $card;
                     break;
                 }
@@ -65,7 +66,7 @@ final class RoyalFlushRank extends AbstractRank
             // Ensure the straight is specifically Ten-to-Ace (T-J-Q-K-A).
             // The `straight()` helper returns the suited straight in
             // `cardsInStraight` (ascending order). Verify ranks are [10,11,12,13,14].
-            $straightRanks = \array_map(static fn (Card $c): int => $c->getRank()->getInt(), $cardsInStraight);
+            $straightRanks = \array_map(static fn (Card $c): int => RankValue::of($c), $cardsInStraight);
             \sort($straightRanks);
             if ($straightRanks !== [10, 11, 12, 13, 14]) {
                 continue;
@@ -88,8 +89,8 @@ final class RoyalFlushRank extends AbstractRank
             }
 
             // Tie-breaker: prefer higher kicker
-            $kickerRank = $kicker?->getRank()->getInt() ?? 0;
-            $bestKickerRank = $bestKicker?->getRank()->getInt() ?? 0;
+            $kickerRank = null === $kicker ? 0 : RankValue::of($kicker);
+            $bestKickerRank = null === $bestKicker ? 0 : RankValue::of($bestKicker);
             if ($kickerRank > $bestKickerRank) {
                 $bestHigh = $high;
                 $bestKicker = $kicker;

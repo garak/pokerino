@@ -4,6 +4,7 @@ namespace Garak\Pokerino\Rank;
 
 use Garak\Card\Card;
 use Garak\Pokerino\CardSorter;
+use Garak\Pokerino\RankValue;
 
 abstract class AbstractRank
 {
@@ -19,17 +20,17 @@ abstract class AbstractRank
      */
     protected static function getCardsValues(array $cards): array
     {
-        return \array_map(static fn (Card $card): int => $card->getRank()->getInt(), $cards);
+        return \array_map(static fn (Card $card): int => RankValue::of($card), $cards);
     }
 
     /**
      * @param array<int, Card> $cards
      *
-     * @return array<int, int>
+     * @return array<int, string>
      */
     protected static function getCardsSuits(array $cards): array
     {
-        return \array_map(static fn (Card $card): int => $card->getSuit()->getInt(), $cards);
+        return \array_map(static fn (Card $card): string => $card->getSuit()->value, $cards);
     }
 
     /**
@@ -42,7 +43,7 @@ abstract class AbstractRank
         $counts = \array_count_values(self::getCardsValues($cards));
         $return = $cards;
         foreach ($cards as $key => $card) {
-            $rank = $card->getRank()->getInt();
+            $rank = RankValue::of($card);
             if ($counts[$rank] > 1) {
                 unset($return[$key]);
                 break;

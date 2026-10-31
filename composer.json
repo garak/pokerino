@@ -12,13 +12,13 @@
     "require": {
         "php": "^8.2",
         "doctrine/collections": "^2.0 || ^3.0",
-        "garak/card": "^0.10",
+        "garak/card": "^0.13.1",
         "symfony/polyfill-php84": "^1.38"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.95",
         "phpstan/phpstan-strict-rules": "^2.0",
-        "phpunit/phpunit": "^11.5 || ^12.5 || ^13.1"
+        "phpunit/phpunit": "^11.5 || ^12.5 || ^13.4"
     },
     "extra": {
         "branch-alias": {

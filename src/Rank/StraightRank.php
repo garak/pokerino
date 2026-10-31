@@ -3,6 +3,7 @@
 namespace Garak\Pokerino\Rank;
 
 use Garak\Pokerino\CardSorter;
+use Garak\Pokerino\RankValue;
 
 final class StraightRank extends AbstractRank
 {
@@ -51,7 +52,7 @@ final class StraightRank extends AbstractRank
         if (4 === \max($sequence, $maxSequence)) {
             $maxKey = \array_search($max, $values, true);
             foreach ($cards as $card) {
-                if ($card->getRank()->getInt() === $values[$maxKey]) {
+                if (RankValue::of($card) === $values[$maxKey]) {
                     $high = $card;
                     break;
                 }
@@ -69,7 +70,7 @@ final class StraightRank extends AbstractRank
         // straight with ace in first position
         if (isset($value) && 14 === $value && 2 === $first && 3 === \max($sequence, $maxSequence) && \in_array(5, $values, true) && \in_array(4, $values, true) && \in_array(3, $values, true)) {
             foreach ($cards as $card) {
-                if (5 === $card->getRank()->getInt()) { // A, 2, 3, 4, 5
+                if (5 === RankValue::of($card)) { // A, 2, 3, 4, 5
                     $high = $card;
                     break;
                 }
