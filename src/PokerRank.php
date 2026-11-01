@@ -108,7 +108,7 @@ final class PokerRank
     private function computeTieBreak(string $point): array
     {
         // helper closures
-        $values = \array_map(static fn (Card $c): int => $c->getRank()->getInt(), $this->cards);
+        $values = \array_map(static fn (Card $c): int => RankValue::of($c), $this->cards);
         // counts map rank => count
         $counts = [];
         foreach ($values as $v) {
@@ -121,7 +121,7 @@ final class PokerRank
         // group cards by suit
         $suits = [];
         foreach ($this->cards as $card) {
-            $s = $card->getSuit()->getInt();
+            $s = $card->getSuit()->value;
             $suits[$s][] = $card;
         }
 
@@ -168,7 +168,7 @@ final class PokerRank
                     if (\count($cards) < 5) {
                         continue;
                     }
-                    $r = \array_map(static fn (Card $c): int => $c->getRank()->getInt(), $cards);
+                    $r = \array_map(static fn (Card $c): int => RankValue::of($c), $cards);
                     $h = $getStraightHigh($r);
                     if (null !== $h && $h > $bestHigh) {
                         $bestHigh = $h;
@@ -206,8 +206,8 @@ final class PokerRank
                     if (\count($cards) < 5) {
                         continue;
                     }
-                    \usort($cards, static fn (Card $a, Card $b): int => $b->getRank()->getInt() <=> $a->getRank()->getInt());
-                    $top5 = \array_map(static fn (Card $c): int => $c->getRank()->getInt(), \array_slice($cards, 0, 5));
+                    \usort($cards, static fn (Card $a, Card $b): int => RankValue::of($b) <=> RankValue::of($a));
+                    $top5 = \array_map(static fn (Card $c): int => RankValue::of($c), \array_slice($cards, 0, 5));
                     if ([] === $best) {
                         $best = $top5;
                         continue;

@@ -3,6 +3,7 @@
 namespace Garak\Pokerino\Rank;
 
 use Garak\Pokerino\CardSorter;
+use Garak\Pokerino\RankValue;
 
 final class ThreeOfAKindRank extends AbstractRank
 {
@@ -16,14 +17,14 @@ final class ThreeOfAKindRank extends AbstractRank
         }
         CardSorter::sort($cards);
         foreach ($cards as $card) {
-            $rank = $card->getRank()->getInt();
+            $rank = RankValue::of($card);
             if (3 === $counts[$rank]) {
                 $high = $card;
                 break;
             }
         }
         foreach ($cards as $card) {
-            $rank = $card->getRank()->getInt();
+            $rank = RankValue::of($card);
             if (3 !== $counts[$rank]) {
                 $kicker = $card;
                 break;

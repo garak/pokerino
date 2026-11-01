@@ -3,6 +3,7 @@
 namespace Garak\Pokerino\Rank;
 
 use Garak\Pokerino\CardSorter;
+use Garak\Pokerino\RankValue;
 
 final class FullHouseRank extends AbstractRank
 {
@@ -19,14 +20,14 @@ final class FullHouseRank extends AbstractRank
         CardSorter::sort($cards);
         // In a Full House the THREE-OF-A-KIND determines the hand value, not the pair
         foreach ($cards as $card) {
-            $rank = $card->getRank()->getInt();
+            $rank = RankValue::of($card);
             if (3 === $counts[$rank]) {
                 $high = $card;
                 break;
             }
         }
         foreach ($cards as $card) {
-            $rank = $card->getRank()->getInt();
+            $rank = RankValue::of($card);
             if (2 !== $counts[$rank] && 3 !== $counts[$rank]) {
                 $kicker = $card;
                 break;

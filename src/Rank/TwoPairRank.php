@@ -3,6 +3,7 @@
 namespace Garak\Pokerino\Rank;
 
 use Garak\Pokerino\CardSorter;
+use Garak\Pokerino\RankValue;
 
 final class TwoPairRank extends AbstractRank
 {
@@ -17,14 +18,14 @@ final class TwoPairRank extends AbstractRank
         }
         CardSorter::sort($cards);
         foreach ($cards as $card) {
-            $rank = $card->getRank()->getInt();
+            $rank = RankValue::of($card);
             if (2 === $counts[$rank]) {
                 $high = $card;
                 break;
             }
         }
         foreach ($cards as $card) {
-            $rank = $card->getRank()->getInt();
+            $rank = RankValue::of($card);
             if (2 !== $counts[$rank]) {
                 $kicker = $card;
                 break;

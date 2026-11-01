@@ -4,15 +4,16 @@ namespace Garak\Pokerino\Rank;
 
 use Garak\Card\Card;
 use Garak\Pokerino\CardSorter;
+use Garak\Pokerino\RankValue;
 
 final class StraightFlushRank extends AbstractRank
 {
     public static function isPoint(array $cards): RankResult
     {
-        // Build counts using int keys to avoid string/int mismatch from array_count_values
+        // Count cards by suit
         $counts = [];
         foreach ($cards as $card) {
-            $s = $card->getSuit()->getInt();
+            $s = $card->getSuit()->value;
             $counts[$s] = ($counts[$s] ?? 0) + 1;
         }
 
@@ -30,7 +31,7 @@ final class StraightFlushRank extends AbstractRank
             // Collect cards of this suit
             $flushCards = \array_values(\array_filter(
                 $cards,
-                static fn (Card $card): bool => $card->getSuit()->getInt() === $suit
+                static fn (Card $card): bool => $card->getSuit()->value === $suit
             ));
             if ([] === $flushCards) {
                 continue;
@@ -54,7 +55,7 @@ final class StraightFlushRank extends AbstractRank
             if ($isStraight) {
                 $maxKey = \array_search($max, $values, true);
                 foreach ($flushCards as $card) {
-                    if ($card->getRank()->getInt() === $values[$maxKey]) {
+                    if (RankValue::of($card) === $values[$maxKey]) {
                         $high = $card;
                         break;
                     }
@@ -65,7 +66,7 @@ final class StraightFlushRank extends AbstractRank
                 if (2 === $first && \in_array(14, $values, true) && 3 === \max($sequence, $maxSequence) && \in_array(5, $values, true) && \in_array(4, $values, true) && \in_array(3, $values, true)) {
                     // high is the 5 in the wheel
                     foreach ($flushCards as $card) {
-                        if (5 === $card->getRank()->getInt()) {
+                        if (5 === RankValue::of($card)) {
                             $high = $card;
                             break;
                         }
@@ -87,15 +88,15 @@ final class StraightFlushRank extends AbstractRank
                 }
             }
 
-            $highRank = $high->getRank()->getInt();
+            $highRank = RankValue::of($high);
             if ($highRank > $bestHighRank) {
                 $bestHighRank = $highRank;
                 $bestHigh = $high;
                 $bestKicker = $kicker;
             } elseif ($highRank === $bestHighRank) {
                 // tie-break by kicker
-                $kickerRank = $kicker?->getRank()->getInt() ?? 0;
-                $bestKickerRank = $bestKicker?->getRank()->getInt() ?? 0;
+                $kickerRank = null === $kicker ? 0 : RankValue::of($kicker);
+                $bestKickerRank = null === $bestKicker ? 0 : RankValue::of($bestKicker);
                 if ($kickerRank > $bestKickerRank) {
                     $bestHigh = $high;
                     $bestKicker = $kicker;

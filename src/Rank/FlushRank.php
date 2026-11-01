@@ -3,15 +3,16 @@
 namespace Garak\Pokerino\Rank;
 
 use Garak\Pokerino\CardSorter;
+use Garak\Pokerino\RankValue;
 
 final class FlushRank extends AbstractRank
 {
     public static function isPoint(array $cards): RankResult
     {
-        // Build counts using int keys to avoid string/int mismatch from array_count_values
+        // Count cards by suit
         $counts = [];
         foreach ($cards as $card) {
-            $s = $card->getSuit()->getInt();
+            $s = $card->getSuit()->value;
             $counts[$s] = ($counts[$s] ?? 0) + 1;
         }
 
@@ -21,10 +22,6 @@ final class FlushRank extends AbstractRank
         // five suited cards lexicographically.
         $bestFlush = null; // array of Card
         foreach ($counts as $suit => $count) {
-            // array_count_values can produce string keys even when values are ints.
-            // Use non-strict comparisons below to avoid type mismatch between
-            // the array key (string) and getSuit()->getInt() (int) while keeping
-            // static analysis happy.
             if ($count < 5) {
                 continue;
             }
@@ -32,7 +29,7 @@ final class FlushRank extends AbstractRank
             // Collect cards of this suit and sort them descending
             $suitCards = [];
             foreach ($cards as $card) {
-                if ($card->getSuit()->getInt() === $suit) {
+                if ($card->getSuit()->value === $suit) {
                     $suitCards[] = $card;
                 }
             }
@@ -49,8 +46,8 @@ final class FlushRank extends AbstractRank
 
             // Compare topFive with bestFlush lexicographically by rank
             for ($i = 0; $i < 5; ++$i) {
-                $r1 = $topFive[$i]->getRank()->getInt();
-                $r2 = $bestFlush[$i]->getRank()->getInt();
+                $r1 = RankValue::of($topFive[$i]);
+                $r2 = RankValue::of($bestFlush[$i]);
                 if ($r1 > $r2) {
                     $bestFlush = $topFive;
                     break;
@@ -71,12 +68,12 @@ final class FlushRank extends AbstractRank
         // part of the flush (a side card), so we search the full card set for
         // the first card of a different suit after sorting.
         $high = $bestFlush[0];
-        $flushSuit = $high->getSuit()->getInt();
+        $flushSuit = $high->getSuit()->value;
 
         CardSorter::sort($cards);
         $kicker = null;
         foreach ($cards as $card) {
-            if ($card->getSuit()->getInt() !== $flushSuit) {
+            if ($card->getSuit()->value !== $flushSuit) {
                 $kicker = $card;
                 break;
             }
